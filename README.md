@@ -1,17 +1,18 @@
 # Elastic-Stack-Exemplar
 
-This document capture a wide-variety of notes that I've collected while using the products that copromise the Elastic stack.  Unless stated otherwise, the various Elastic products described below were installed and run using Docker on top of an AWS EC2 micro instance.
+This document captures a wide-variety of notes that I've collected while using the products that copromise the Elastic stack.  Unless stated otherwise, the various Elastic products described below were installed and run using Docker on top of an AWS EC2 micro instance.
 
 * [Docker @ Elastic](https://www.docker.elastic.co/#)
   * This page covers the entire suite of Elastic products
   * Elastic uses their own, dedicated, Docker registry
 
-The following files were created to make using the ES products easier:
-* bulk-load-json-convertor.R - Convert one or more CSV files into the "bulk load" JSON format expected by Elastic Search
+This repository includes the following files:
+* bulk-load-json-convertor.R
+  * Convert one or more CSV files into the "bulk load" JSON format expected by Elastic Search
   * See the Bulk API section below for more details
 * time-util.R - Utility code for creating random date/times and sessions of various random lengths
     * Uniform distribution of dates; Gaussian distribution of times
-    * Useful when creating mock data that includes realistic "sessions"
+    * Useful when creating mock data that includes realistic times for "sessions"
 
 ## Elastic Search
 ### Elastic Search - Installation
@@ -20,7 +21,9 @@ Due to limited memory, it can be difficult getting ES to start and run correctly
 * docker pull docker.elastic.co/elasticsearch/elasticsearch:6.1.1
 * sudo docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms128m -Xmx128m" docker.elastic.co/elasticsearch/elasticsearch:6.0.1
 
-### [ElasticSearch - Basic Concepts](https://www.elastic.co/guide/en/elasticsearch/reference/current/_basic_concepts.html)
+### ElasticSearch - [Basic Concepts](https://www.elastic.co/guide/en/elasticsearch/reference/current/_basic_concepts.html)
+
+TODO - This information belongs in a org-drill file in the Study-Notes repository.
 
 * Near Realtime (NRT)
   * Elasticsearch is a near real time search platform. There is a slight latency (< 1s) from the time you index a document until the time it becomes searchable.
@@ -74,6 +77,9 @@ Due to limited memory, it can be difficult getting ES to start and run correctly
     * You can monitor shard sizes using the _cat/shards API
 
 ### Elastic Search - Basic Commands
+
+TODO - Change this to a table.
+
 * [Check Cluster Health](https://www.elastic.co/guide/en/elasticsearch/reference/current/_cluster_health.html)
   * GET /_cat/health?v
     * curl 'localhost:9200/_cat/health?v'
@@ -107,11 +113,11 @@ Due to limited memory, it can be difficult getting ES to start and run correctly
   * DELETE /index/doc/id?pretty
 * [Batch Processing](https://www.elastic.co/guide/en/elasticsearch/reference/current/_batch_processing.html)
 
-### [Elastic Search - Search API](https://www.elastic.co/guide/en/elasticsearch/reference/current/_the_search_api.html)
+### Elastic Search - [Search API](https://www.elastic.co/guide/en/elasticsearch/reference/current/_the_search_api.html)
 
 ### Elastic Search - Cluster Health
 
-### [Elastic Search - Bulk API](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html)
+### Elastic Search - [Bulk API](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html)
 
 ### Elastic Search - Useful Links
 * [Elasticsearch Reference (ver 6.0)](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html)
