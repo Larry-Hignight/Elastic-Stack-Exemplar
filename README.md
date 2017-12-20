@@ -7,10 +7,12 @@ This document captures a wide-variety of notes that I've collected while using t
   * Elastic uses their own, dedicated, Docker registry
 
 This repository includes the following files:
-* bulk-load-json-convertor.R
+* Packetbeat/packetbeat.yml
+  * The Packetbeat configuration file
+* R-Utils/bulk-load-json-convertor.R
   * Convert one or more CSV files into the "bulk load" JSON format expected by Elastic Search
   * See the Bulk API section below for more details
-* time-util.R - Utility code for creating random date/times and sessions of various random lengths
+* R-Utils/time-util.R - Utility code for creating random date/times and sessions of various random lengths
     * Uniform distribution of dates; Gaussian distribution of times
     * Useful when creating mock data that includes realistic times for "sessions"
 
@@ -126,6 +128,8 @@ TODO - Change this to a table.
 * [Removal of mapping types](https://www.elastic.co/guide/en/elasticsearch/reference/6.x/removal-of-types.html)
 
 ## Beats
-### PacketBeat
-#### PacketBeat Install
+### Packetbeat
+#### Packetbeat - Installation
 
+* sudo docker pull docker.elastic.co/beats/packetbeat:6.1.1
+* sudo docker run --cap-add=NET_ADMIN --network=host   -v /home/ubuntu/Adtalem/Analytics-Demo/Elastic-Demo/packetbeat/packetbeat.yml:/usr/share/packetbeat/packetbeat.yml   docker.elastic.co/beats/packetbeat:6.1.1
