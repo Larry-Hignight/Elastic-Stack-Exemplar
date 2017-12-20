@@ -12,36 +12,39 @@ Because of the limited memory, it is difficult getting ES to start on an AWS Mic
 ## Basic Commands
 * [Check Cluster Health](https://www.elastic.co/guide/en/elasticsearch/reference/current/_cluster_health.html)
   * GET /_cat/health?v
-    * curl http://127.0.0.1:9200/_cat/health?v
+    * curl 'localhost:9200/_cat/health?v'
 * [List All Nodes](https://www.elastic.co/guide/en/elasticsearch/reference/current/_cluster_health.html)
   * GET /_cat/nodes?v
 * [List All Indices](https://www.elastic.co/guide/en/elasticsearch/reference/current/_list_all_indices.html)
   * GET /_cat/indices?v
 * [Create an Index](https://www.elastic.co/guide/en/elasticsearch/reference/current/_create_an_index.html):
   * PUT /index?pretty
-    * curl -X PUT http://127.0.0.1:9200/customer?pretty
+    * curl -X PUT 'localhost:9200/customer?pretty'
   * GET /_cat/indices?v
 * [Index and Query a Document](https://www.elastic.co/guide/en/elasticsearch/reference/current/_index_and_query_a_document.html):
   * PUT /index/doc/id?pretty
     * where index is the name of the index and id is a numeric identifier
-    * curl -H 'Content-Type: application/json' -X PUT -d '{"name": "Larry"}' http://127.0.0.1:9200/customer/doc/1?pretty
+    * curl -H 'Content-Type: application/json' -X PUT -d '{"name": "Larry"}' 'localhost:9200/customer/doc/1?pretty'
   * GET /index/doc/id?pretty
-    * curl http://127.0.0.1:9200/customer/doc/1?pretty
-    * curl http://127.0.0.1:9200/customer/doc/1/_source?pretty
+    * curl 'localhost:9200/customer/doc/1?pretty'
+    * curl 'localhost:9200/customer/doc/1/_source?pretty'
       * To show only the "\\_source" info for the document
   * POST /index/doc?pretty
     * ElasticSearch will generate a random ID for the document index
-    * curl -H 'Content-Type: application/json' -X POST -d '{"name": "Courtney"}' http://127.0.0.1:9200/customer/doc?pretty
+    * curl -H 'Content-Type: application/json' -X POST -d '{"name": "Courtney"}' 'localhost:9200/customer/doc?pretty'
 * [Delete an Index](https://www.elastic.co/guide/en/elasticsearch/reference/current/_delete_an_index.html)
   * DELETE /customer?pretty
-    * curl -X DELETE http://127.0.0.1:9200/customer?pretty
+    * curl -X DELETE 'localhost:9200/customer?pretty'
   * GET /_cat/indices?v
 * [Update a Document](https://www.elastic.co/guide/en/elasticsearch/reference/current/_updating_documents.html)
   * POST /customer/doc/1/_update?pretty
-    * curl -H 'Content-Type: application/json' -X POST -d '{"name": "Sir Lawrence Hignight", "Age": "Eternal"}' http://127.0.0.1:9200/customer/doc/1?pretty
+    * curl -H 'Content-Type: application/json' -d '{"name": "Sir Lawrence", "Age": "Old"}' -X POST 'localhost:9200/customer/doc/1?pretty'
 * [Delete a Document](https://www.elastic.co/guide/en/elasticsearch/reference/current/_deleting_documents.html)
   * DELETE /index/doc/id?pretty
 * [Batch Processing](https://www.elastic.co/guide/en/elasticsearch/reference/current/_batch_processing.html)
+
+## [The Search API](https://www.elastic.co/guide/en/elasticsearch/reference/current/_the_search_api.html)
+* 
 
 
 ## Useful Links
@@ -107,4 +110,7 @@ Because of the limited memory, it is difficult getting ES to start on an AWS Mic
 ## Cluster Health
 
 
+## Useful Links
+
+* [Removal of mapping types](https://www.elastic.co/guide/en/elasticsearch/reference/6.x/removal-of-types.html)
 
