@@ -1,61 +1,27 @@
 # Elastic-Stack-Exemplar
 
-Note - Elastic uses their own, dedicated, Docker registry.
+This document capture a wide-variety of notes that I've collected while using the products that copromise the Elastic stack.  Unless stated otherwise, the various Elastic products described below were installed and run using Docker on top of an AWS EC2 micro instance.
 
-## AWS Settings
+* [Docker @ Elastic](https://www.docker.elastic.co/#)
+  * This page covers the entire suite of Elastic products
+  * Elastic uses their own, dedicated, Docker registry
 
-Because of the limited memory, it is difficult getting ES to start on an AWS Micro Instance.  Try the following:
+The following files were created to make using the ES products easier:
+* bulk-load-json-convertor.R - Convert one or more CSV files into the "bulk load" JSON format expected by Elastic Search
+  * See the Bulk API section below for more details
+* time-util.R - Utility code for creating random date/times and sessions of various random lengths
+    * Uniform distribution of dates; Gaussian distribution of times
+    * Useful when creating mock data that includes realistic "sessions"
 
+## Elastic Search
+### Elastic Search - Installation
+Due to limited memory, it can be difficult getting ES to start and run correctly on a free AWS EC2 micro instance.  However, I've been able to store over 15K documents and over 50K packetbeats when starting ES using the settings below:
+
+* docker pull docker.elastic.co/elasticsearch/elasticsearch:6.1.1
 * sudo docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms128m -Xmx128m" docker.elastic.co/elasticsearch/elasticsearch:6.0.1
 
+### [ElasticSearch - Basic Concepts](https://www.elastic.co/guide/en/elasticsearch/reference/current/_basic_concepts.html)
 
-## Basic Commands
-* [Check Cluster Health](https://www.elastic.co/guide/en/elasticsearch/reference/current/_cluster_health.html)
-  * GET /_cat/health?v
-    * curl 'localhost:9200/_cat/health?v'
-* [List All Nodes](https://www.elastic.co/guide/en/elasticsearch/reference/current/_cluster_health.html)
-  * GET /_cat/nodes?v
-* [List All Indices](https://www.elastic.co/guide/en/elasticsearch/reference/current/_list_all_indices.html)
-  * GET /_cat/indices?v
-* [Create an Index](https://www.elastic.co/guide/en/elasticsearch/reference/current/_create_an_index.html):
-  * PUT /index?pretty
-    * curl -X PUT 'localhost:9200/customer?pretty'
-  * GET /_cat/indices?v
-* [Index and Query a Document](https://www.elastic.co/guide/en/elasticsearch/reference/current/_index_and_query_a_document.html):
-  * PUT /index/doc/id?pretty
-    * where index is the name of the index and id is a numeric identifier
-    * curl -H 'Content-Type: application/json' -X PUT -d '{"name": "Larry"}' 'localhost:9200/customer/doc/1?pretty'
-  * GET /index/doc/id?pretty
-    * curl 'localhost:9200/customer/doc/1?pretty'
-    * curl 'localhost:9200/customer/doc/1/_source?pretty'
-      * To show only the "\\_source" info for the document
-  * POST /index/doc?pretty
-    * ElasticSearch will generate a random ID for the document index
-    * curl -H 'Content-Type: application/json' -X POST -d '{"name": "Courtney"}' 'localhost:9200/customer/doc?pretty'
-* [Delete an Index](https://www.elastic.co/guide/en/elasticsearch/reference/current/_delete_an_index.html)
-  * DELETE /customer?pretty
-    * curl -X DELETE 'localhost:9200/customer?pretty'
-  * GET /_cat/indices?v
-* [Update a Document](https://www.elastic.co/guide/en/elasticsearch/reference/current/_updating_documents.html)
-  * POST /customer/doc/1/_update?pretty
-    * curl -H 'Content-Type: application/json' -d '{"name": "Sir Lawrence", "Age": "Old"}' -X POST 'localhost:9200/customer/doc/1?pretty'
-* [Delete a Document](https://www.elastic.co/guide/en/elasticsearch/reference/current/_deleting_documents.html)
-  * DELETE /index/doc/id?pretty
-* [Batch Processing](https://www.elastic.co/guide/en/elasticsearch/reference/current/_batch_processing.html)
-
-## [The Search API](https://www.elastic.co/guide/en/elasticsearch/reference/current/_the_search_api.html)
-* 
-
-
-## Useful Links
-* [Elasticsearch Reference (ver 6.0)](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html)
-* [Docker @ Elastic](https://www.docker.elastic.co/#)
-  * Note - This page covers all of their products
-* [Installing Elasticsearch using Docker](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
-* [X-PAC for Elastic Stack](https://www.elastic.co/guide/en/x-pack/6.0/xpack-introduction.html)
-
-
-## [ElasticSearch - Basic Concepts](https://www.elastic.co/guide/en/elasticsearch/reference/current/_basic_concepts.html)
 * Near Realtime (NRT)
   * Elasticsearch is a near real time search platform. There is a slight latency (< 1s) from the time you index a document until the time it becomes searchable.
 
@@ -107,10 +73,53 @@ Because of the limited memory, it is difficult getting ES to start on an AWS Mic
     * There is a maximum number of documents you can have in a single Lucene index (As of LUCENE-5843, the limit is ~2 billion documents)
     * You can monitor shard sizes using the _cat/shards API
 
-## Cluster Health
+### Elastic Search - Basic Commands
+* [Check Cluster Health](https://www.elastic.co/guide/en/elasticsearch/reference/current/_cluster_health.html)
+  * GET /_cat/health?v
+    * curl 'localhost:9200/_cat/health?v'
+* [List All Nodes](https://www.elastic.co/guide/en/elasticsearch/reference/current/_cluster_health.html)
+  * GET /_cat/nodes?v
+* [List All Indices](https://www.elastic.co/guide/en/elasticsearch/reference/current/_list_all_indices.html)
+  * GET /_cat/indices?v
+* [Create an Index](https://www.elastic.co/guide/en/elasticsearch/reference/current/_create_an_index.html):
+  * PUT /index?pretty
+    * curl -X PUT 'localhost:9200/customer?pretty'
+  * GET /_cat/indices?v
+* [Index and Query a Document](https://www.elastic.co/guide/en/elasticsearch/reference/current/_index_and_query_a_document.html):
+  * PUT /index/doc/id?pretty
+    * where index is the name of the index and id is a numeric identifier
+    * curl -H 'Content-Type: application/json' -X PUT -d '{"name": "Larry"}' 'localhost:9200/customer/doc/1?pretty'
+  * GET /index/doc/id?pretty
+    * curl 'localhost:9200/customer/doc/1?pretty'
+    * curl 'localhost:9200/customer/doc/1/_source?pretty'
+      * To show only the "\\_source" info for the document
+  * POST /index/doc?pretty
+    * ElasticSearch will generate a random ID for the document index
+    * curl -H 'Content-Type: application/json' -X POST -d '{"name": "Courtney"}' 'localhost:9200/customer/doc?pretty'
+* [Delete an Index](https://www.elastic.co/guide/en/elasticsearch/reference/current/_delete_an_index.html)
+  * DELETE /customer?pretty
+    * curl -X DELETE 'localhost:9200/customer?pretty'
+  * GET /_cat/indices?v
+* [Update a Document](https://www.elastic.co/guide/en/elasticsearch/reference/current/_updating_documents.html)
+  * POST /customer/doc/1/_update?pretty
+    * curl -H 'Content-Type: application/json' -d '{"name": "Sir Lawrence", "Age": "Old"}' -X POST 'localhost:9200/customer/doc/1?pretty'
+* [Delete a Document](https://www.elastic.co/guide/en/elasticsearch/reference/current/_deleting_documents.html)
+  * DELETE /index/doc/id?pretty
+* [Batch Processing](https://www.elastic.co/guide/en/elasticsearch/reference/current/_batch_processing.html)
 
+### [Elastic Search - Search API](https://www.elastic.co/guide/en/elasticsearch/reference/current/_the_search_api.html)
 
-## Useful Links
+### Elastic Search - Cluster Health
 
+### [Elastic Search - Bulk API](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html)
+
+### Elastic Search - Useful Links
+* [Elasticsearch Reference (ver 6.0)](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html)
+* [Installing Elasticsearch using Docker](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
+* [X-PAC for Elastic Stack](https://www.elastic.co/guide/en/x-pack/6.0/xpack-introduction.html)
 * [Removal of mapping types](https://www.elastic.co/guide/en/elasticsearch/reference/6.x/removal-of-types.html)
+
+## Beats
+### PacketBeat
+#### PacketBeat Install
 
