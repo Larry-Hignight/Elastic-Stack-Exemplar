@@ -138,7 +138,7 @@ TODO - Change this to a table.
   * Different patch versions don't matter, but Elastic recommends using the same versions down to the patch version
 * Since Kibana runs on Node.js, we include the necessary Node.js binaries for these platforms.
   * Running Kibana against a separately maintained version of Node.js is not supported.
-  
+
 
 ### Kibana - [Installation](https://www.elastic.co/guide/en/kibana/current/docker.html)
 * sudo docker pull docker.elastic.co/kibana/kibana:6.1.1
@@ -167,6 +167,8 @@ These notes are based on the [Getting Started with Packbeat](https://www.elastic
   * sudo docker run --cap-add=NET_ADMIN --network=host \
     -v /home/ubuntu/Elastic-Stack-Exemplar/Packetbeat/packetbeat.yml:/usr/share/packetbeat/packetbeat.yml \
     docker.elastic.co/beats/packetbeat:6.1.1
+  * To setup the Packetbeat dashboards in Kibana:
+    *sudo docker run --cap-add=NET_ADMIN --network=host -v /home/ubuntu/Elastic-Stack-Exemplar/Packetbeat/packetbeat.yml:/usr/share/packetbeat/packetbeat.yml docker.elastic.co/beats/packetbeat:6.1.1 setup --dashboards
   * Config file: /usr/share/packetbeat/packetbeat.yml
 
 ##### DEB:
