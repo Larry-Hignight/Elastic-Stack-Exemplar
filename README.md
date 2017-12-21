@@ -7,6 +7,8 @@ This document captures a wide-variety of notes that I've collected while using t
   * Elastic uses their own, dedicated, Docker registry
 
 This repository includes the following files:
+* health-check.sh
+  * A small script that I run on EC2 micro instance to monitor the ES cluster (usually w/ watch -n 5 ./health-check.sh)
 * Packetbeat/packetbeat.yml
   * The Packetbeat configuration file
 * R-Utils/bulk-load-json-convertor.R
@@ -127,9 +129,47 @@ TODO - Change this to a table.
 * [X-PAC for Elastic Stack](https://www.elastic.co/guide/en/x-pack/6.0/xpack-introduction.html)
 * [Removal of mapping types](https://www.elastic.co/guide/en/elasticsearch/reference/6.x/removal-of-types.html)
 
+## Kibana
+
+* Kibana should be configured to run against an Elasticsearch node of the same version. This is the officially supported configuration.
+  * Elastic products use the following versioning scheme:  major.minor.path
+  * Major versions of ES and Kibana must always match
+  * Minor versions of ES can be greater than Kibana;  Not the other way around.
+  * Different patch versions don't matter, but Elastic recommends using the same versions down to the patch version
+* Since Kibana runs on Node.js, we include the necessary Node.js binaries for these platforms.
+  * Running Kibana against a separately maintained version of Node.js is not supported.
+  
+
+### Kibana - [Installation](https://www.elastic.co/guide/en/kibana/current/docker.html)
+* sudo docker pull docker.elastic.co/kibana/kibana:6.1.1
+* sudo docker run -v /home/ubuntu/Elastic-Stack-Exemplar/Kibana/kibana.yml:/usr/share/kibana/config/kibana.yml docker.elastic.co/kibana/kibana:6.1.1
+
 ## Beats
 ### Packetbeat
+
+These notes are based on the [Getting Started with Packbeat](https://www.elastic.co/guide/en/beats/packetbeat/current/packetbeat-getting-started.html) instructions at Elastic.
+
 #### Packetbeat - Installation
 
-* sudo docker pull docker.elastic.co/beats/packetbeat:6.1.1
-* sudo docker run --cap-add=NET_ADMIN --network=host   -v /home/ubuntu/Adtalem/Analytics-Demo/Elastic-Demo/packetbeat/packetbeat.yml:/usr/share/packetbeat/packetbeat.yml   docker.elastic.co/beats/packetbeat:6.1.1
+##### Docker:
+* Installation:
+  * sudo docker pull docker.elastic.co/beats/packetbeat:6.1.1
+  * sudo docker run --cap-add=NET_ADMIN --network=host \
+    -v /home/ubuntu/Elastic-Stack-Exemplar/Packetbeat/packetbeat.yml:/usr/share/packetbeat/packetbeat.yml \
+    docker.elastic.co/beats/packetbeat:6.1.1
+  * Config file: /usr/share/packetbeat/packetbeat.yml
+
+##### DEB:
+* Installation:
+  * sudo apt-get install libpcap0.8
+  * curl -L -O https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-6.1.1-amd64.deb
+  * sudo dpkg -i packetbeat-6.1.1-amd64.deb
+* Config file: /etc/packetbeat/packetbeat.yml
+
+#### Packetbeat - Configuration Notes
+
+The --cap-add=NET_ADMIN --network-host is needed in order for the Docker instance of Packetbeat to capture all of the host traffic.
+
+* Select the network interface from which to capture the traffic.
+  * On Linux: Packetbeat supports capturing all messages sent or received by the server on which Packetbeat is installed.
+  * For this, use any as the device: packetbeat.interfaces.device: any
