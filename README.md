@@ -22,8 +22,8 @@ This repository includes the following files:
 ### Elastic Search - Installation
 Due to limited memory, it can be difficult getting ES to start and run correctly on a free AWS EC2 micro instance.  However, I've been able to store over 15K documents and over 50K packetbeats when starting ES using the settings below:
 
-* docker pull docker.elastic.co/elasticsearch/elasticsearch:6.1.1
-* sudo docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms128m -Xmx128m" docker.elastic.co/elasticsearch/elasticsearch:6.0.1
+* sudo docker pull docker.elastic.co/elasticsearch/elasticsearch:6.1.1
+* sudo docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms256m -Xmx256m" docker.elastic.co/elasticsearch/elasticsearch:6.1.1
 
 ### ElasticSearch - [Basic Concepts](https://www.elastic.co/guide/en/elasticsearch/reference/current/_basic_concepts.html)
 
@@ -142,7 +142,17 @@ TODO - Change this to a table.
 
 ### Kibana - [Installation](https://www.elastic.co/guide/en/kibana/current/docker.html)
 * sudo docker pull docker.elastic.co/kibana/kibana:6.1.1
-* sudo docker run -v /home/ubuntu/Elastic-Stack-Exemplar/Kibana/kibana.yml:/usr/share/kibana/config/kibana.yml docker.elastic.co/kibana/kibana:6.1.1
+* sudo docker run -p 5601:5601 -e ES_JAVA_OPTS="-Xms256m -Xmx256m" -v /home/ubuntu/Elastic-Stack-Exemplar/Kibana/kibana.yml:/usr/share/kibana/config/kibana.yml docker.elastic.co/kibana/kibana:6.1.1
+
+### Kibana - Basics
+* [Checking Kibana Status](https://www.elastic.co/guide/en/kibana/current/access.html)
+  * http://localhost:5601/status
+* [Monitoring](https://www.elastic.co/guide/en/kibana/current/monitoring-settings-kb.html)
+  * You can monitor ElasticSearch from Kibana by clicking on Monitoring in the panel on the left
+  * Alternatively: http://localhost:5601/app/monitoring
+* [Defining Index Patterns](https://www.elastic.co/guide/en/kibana/current/tutorial-define-index.html)
+
+
 
 ## Beats
 ### Packetbeat
