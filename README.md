@@ -185,3 +185,38 @@ The --cap-add=NET_ADMIN --network-host is needed in order for the Docker instanc
 * Select the network interface from which to capture the traffic.
   * On Linux: Packetbeat supports capturing all messages sent or received by the server on which Packetbeat is installed.
   * For this, use any as the device: packetbeat.interfaces.device: any
+
+
+
+
+
+----------
+New Notes
+----------
+
+## Fix cluster block exception
+
+elasticsearch.exceptions.AuthorizationException: AuthorizationException(403, 'cluster_block_exception', 'blocked by: [FORBIDDEN/12/index read-only<snip>
+
+curl -XPUT -H "Content-Type: application/json" http://localhost:9200/_all/_settings -d '{"index.blocks.read_only_allow_delete": null}'
+
+More info:
+https://stackoverflow.com/questions/48032661/transporterror403-ucluster-block-exception-ublocked-by-forbidden-12-inde/54348533#54348533
+
+
+
+## How to disable ElasticSearch disk quota / watermark
+
+In its default configuration, ElasticSearch will not allocate any more disk space when more than 90% of the disk are used overall (i.e. by ElasticSearch or other applications).
+
+You can set the watermark extremely low using
+
+curl -X PUT "localhost:9200/_cluster/settings" -H 'Content-Type: application/json' -d'
+{
+  "transient": {
+    "cluster.routing.allocation.disk.watermark.low": "50mb",
+    "cluster.routing.allocation.disk.watermark.high": "50mb",
+    "cluster.routing.allocation.disk.watermark.flood_stage": "50mb",
+    "cluster.info.update.interval": "1m"
+  }
+}'
