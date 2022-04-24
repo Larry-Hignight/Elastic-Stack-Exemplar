@@ -12,7 +12,10 @@ echo "" && echo ""
 vmstat -Sm
 echo "" && echo ""
 
-df -h
+curl -XGET "http://localhost:9200/_cat/allocation?v&pretty"
+echo "" && echo ""
+
+df -h /
 echo "" && echo ""
 
 
